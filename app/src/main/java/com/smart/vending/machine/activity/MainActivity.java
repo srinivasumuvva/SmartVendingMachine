@@ -1,7 +1,9 @@
-package com.smart.vending.machine;
+package com.smart.vending.machine.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import com.smart.vending.machine.R;
 
 public class MainActivity extends AppCompatActivity {
 
