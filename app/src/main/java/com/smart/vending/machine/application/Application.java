@@ -28,6 +28,7 @@ public class Application extends android.app.Application {
 
     public HashMap<String, Float> mProductPriceMap ;
     public HashMap<String, Integer> mProductCountMap ;
+    public HashMap<String,Float> mValidCoins;
 
     @Override
     public void onCreate() {
@@ -37,6 +38,7 @@ public class Application extends android.app.Application {
         mEditor = mSharedPreferences.edit();
         mProductPriceMap = new HashMap<>();
         mProductCountMap = new HashMap<>();
+        mValidCoins =new HashMap<String,Float>();
         initializeValidCoinsSet();
         initializeProductPriceMap();
         rechargeProducts();
@@ -49,9 +51,9 @@ public class Application extends android.app.Application {
     }
 
     private void initializeValidCoinsSet() {
-        Utils.validCoins.put("nickels", 0.05f);
-        Utils.validCoins.put("dimes", 0.1f);
-        Utils.validCoins.put("quarters", 0.25f);
+        mValidCoins.put("nickels", 0.05f);
+        mValidCoins.put("dimes", 0.1f);
+        mValidCoins.put("quarters", 0.25f);
     }
 
     public void initializeProductPriceMap() {

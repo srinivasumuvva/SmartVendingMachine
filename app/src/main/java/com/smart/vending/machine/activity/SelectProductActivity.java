@@ -10,12 +10,15 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.smart.vending.machine.R;
 import com.smart.vending.machine.application.Application;
@@ -30,8 +33,6 @@ import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 public class SelectProductActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener, DialogInterface.OnClickListener {
 
-
-    private static final String TAG = SelectProductActivity.class.getSimpleName();
     private Button mProceedButton;
     private TextView mBalanceTextView, mInsertCoinTextView, mReturnTextView, mChangeTextView;
     private Spinner mProductSpinner;
@@ -40,7 +41,6 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
     private Toolbar mToolbar;
     private String mProductList[];
     private String mSelectedProduct;
-    private int mSelectedCount;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,7 +49,6 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
         initViews();
         mProductList = getResources().getStringArray(R.array.products);
         mApplication = Application.mApplication;
-        // mSelectedProduct=mProductList[0];
     }
 
     private void initViews() {
@@ -68,7 +67,7 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
         mInsertCoinTextView.setOnClickListener(this);
         mReturnTextView.setOnClickListener(this);
         mChangeTextView.setOnClickListener(this);
-        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.activity_main_ordinator_layout);
+        mCoordinatorLayout = (CoordinatorLayout) findViewById(R.id.activity_select_cordinator_layout);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
     }
@@ -81,7 +80,7 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
 
     private void setBalance() {
         float balance = mApplication.getSharedPreferenceFloatValue(Constatns.BALANCE);
-        mBalanceTextView.setText(balance + " " + Constatns.CURRENCY_SYMBOL);
+        mBalanceTextView.setText(Constatns.AVAILABLE_BALANCE+balance + " " + Constatns.CURRENCY_SYMBOL);
     }
 
     @Override
@@ -95,6 +94,7 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
                 setBalance();
                 break;
             case R.id.tview_insert_coin:
+                finish();
                 break;
             case R.id.tview_return:
                  float returnBalance = mApplication.getSharedPreferenceFloatValue(Constatns.BALANCE);
@@ -111,16 +111,9 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
 
     private void processProductSelction() {
         float balance = mApplication.getSharedPreferenceFloatValue(Constatns.BALANCE);
-        Log.e(TAG, "Applicaiton object is " + mApplication);
-        Log.e(TAG, "Product map  object is " + mApplication.mProductCountMap);
-        Log.e(TAG, "mSelectedProduct object is " + mSelectedProduct);
-        Log.e(TAG, "product  count is  " + mApplication.mProductCountMap.get(mSelectedProduct));
-        Log.e(TAG, "balance is  " + balance);
         if (mApplication != null && mApplication.mProductCountMap != null) {
             if (mApplication.mProductCountMap.get(mSelectedProduct) <= 0) {
-//stock is not there
                 displayAlertDialog(mSelectedProduct + " is SOLD OUT ", false);
-
             } else {
                 float productPrice = mApplication.mProductPriceMap.get(mSelectedProduct);
                 if (balance >= productPrice) {
@@ -131,10 +124,8 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
                     setBalance();
                     showSnackbar("THANK YOU.");
                 } else if (balance == 0) {
-// balance is zero
                     finish();
                 } else if (balance < productPrice) {
-// balance is low
                     displayAlertDialog("Product Price is " + productPrice + Constatns.CURRENCY_SYMBOL + "\n" + "Balance is " + balance + Constatns.CURRENCY_SYMBOL, false);
                 }
             }
@@ -142,8 +133,9 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
     }
 
     private void showSnackbar(String pText) {
+        View rootView = SelectProductActivity.this.getWindow().getDecorView().findViewById(android.R.id.content);
         Snackbar snackbar = Snackbar
-                .make(mCoordinatorLayout, pText, Snackbar.LENGTH_LONG);
+                .make(rootView, pText, Snackbar.LENGTH_LONG);
         View snackbarView = snackbar.getView();
         TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.WHITE);
@@ -162,7 +154,6 @@ public class SelectProductActivity extends AppCompatActivity implements View.OnC
     }
 
     private void displayAlertDialog(String pMessage, boolean isInsertButtonRequired) {
-        // final AlertDialog alertDialog = null;
         final AlertDialog.Builder builder =
                 new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
         builder.setMessage(pMessage);

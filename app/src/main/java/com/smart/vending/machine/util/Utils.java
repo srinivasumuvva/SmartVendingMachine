@@ -1,5 +1,7 @@
 package com.smart.vending.machine.util;
 
+import com.smart.vending.machine.application.Application;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -9,12 +11,8 @@ import java.util.HashSet;
 
 public class Utils {
 
-
-    public  static HashMap<String,Float> validCoins=new HashMap<String,Float>();
-
-
-    public static boolean isValidCoin(String pInsertedCoin){
-      return validCoins.containsKey(pInsertedCoin);
+    public static boolean isValidCoin(String pInsertedCoin) {
+        return Application.mApplication.mValidCoins.containsKey(pInsertedCoin);
     }
 
 }

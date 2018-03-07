@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setBalance() {
         float balance = mApplication.getSharedPreferenceFloatValue(Constatns.BALANCE);
-        mBalanceTextView.setText(balance + " " + Constatns.CURRENCY_SYMBOL);
+        mBalanceTextView.setText(Constatns.AVAILABLE_BALANCE+balance + " " + Constatns.CURRENCY_SYMBOL);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String insertedCoin = mInsertCoinInputEditText.getText().toString().toLowerCase();
                 if (Utils.isValidCoin(insertedCoin)) {
                     float balance = mApplication.getSharedPreferenceFloatValue(Constatns.BALANCE);
-                    balance = balance + Utils.validCoins.get(insertedCoin);
+                    balance = balance + mApplication.mValidCoins.get(insertedCoin);
                     mApplication.saveSharedPreferenceFloatType(Constatns.BALANCE, balance);
                     mBalanceTextView.setText(balance + " " + Constatns.CURRENCY_SYMBOL);
                     showSnackbar("Coin is inserted and balance is updated . ");
@@ -90,8 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void showSnackbar(String pText) {
+        View rootView = MainActivity.this.getWindow().getDecorView().findViewById(android.R.id.content);
         Snackbar snackbar = Snackbar
-                .make(mCoordinatorLayout, pText, Snackbar.LENGTH_LONG);
+                .make(rootView, pText, Snackbar.LENGTH_LONG);
         View snackbarView = snackbar.getView();
         TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.WHITE);
